@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
-const uuid = require('uuid');
+const exphbs = require('express-handlebars');
+const members = require('./Members');
+
+
 
 const loge = require('./middleware/logger')
 const app = express();
@@ -9,12 +12,19 @@ const app = express();
 //     //res.send("<h1>Hello World<\h1>");
 //     res.sendfile(path.join(__dirname, 'html', 'index.html'));
 // })
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 
 //app.use(loge);
 
 app.use(express.json());
-//app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: false}));
+
+app.get('/', (req, res) => res.render('index',{
+    title: 'Members App', 
+    members
+}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/members', require('./routes/api/members'));
